@@ -1,0 +1,35 @@
+{
+  "name": "fzdates",
+  "version": "0.1.0",
+  "description": "Date parsing for genealogical data",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "clean": "node scripts/clean.mjs",
+    "prepare": "npm run build",
+    "test": "uvu tests"
+  },
+  "keywords": [
+    "dates",
+    "genealogy",
+    "parser"
+  ],
+  "author": "Øyvind Kallstad",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.26.0",
+    "uvu": "^0.5.6"
+  }
+}
