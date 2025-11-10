@@ -15,7 +15,7 @@ import { parseDate } from 'fzdates';
 
 const result = parseDate('21 Sep 1978');
 
-console.log(result.kind);      // "exact"
+console.log(result.kind);       // "exact"
 console.log(result.value.year); // 1978
 console.log(result.display);    // "1978-09-21"
 ```
@@ -41,10 +41,9 @@ const parser = createDateParser({
 });
 
 const morning = parser.parse('01/02/1900');
-// -> resolves using preferred order, includes alternatives
 
 const range = parser.parse('between 1 jan 1980 and 5 feb 1980');
-console.log(range.display); // "1 January 1980 – 5 February 1980"
+console.log(range.display);
 ```
 
 Pass overrides on individual calls:
@@ -60,12 +59,12 @@ const alternate = parser.parse('21 Sep 1978', {
 
 ## Locale Registration
 
-The library ships with an English locale pack. Register additional locales or extend the defaults by calling `registerLocale` before parsing.
+Register additional locales or extend the defaults by calling `registerLocale` before parsing.
 
 ```js
 import { registerLocale, createDateParser, englishLocale } from 'fzdates';
 
-registerLocale(englishLocale); // idempotent
+registerLocale(englishLocale);
 registerLocale({
 	id: 'fr',
 	monthLookup: {
@@ -88,19 +87,15 @@ const resultat = parser.parse('vers 12 mars 1890');
 console.log(resultat.display); // "ca 12 Mars 1890"
 ```
 
-Locale registrations merge with existing data.
-
 ## Examples
 
-Try the JavaScript browser demo included in the repo:
+Vanilla JavaScript demo included:
 
 ```sh
 cd examples/vanilla
 npm install
 npm run dev
 ```
-
-The example spins up a Vite dev server, wires in the local `fzdates` build, and showcases live parsing with ambiguity selection.
 
 ## Scripts
 
