@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 import { normalizeInput, tokenizeInput, englishLocale, registerLocale } from '../src/index.js';
 import { resolveOptions } from '../src/config/options.js';
 
-// Ensure English locale is registered for tests (idempotent)
+// ensure English locale is available
 registerLocale(englishLocale);
 
 const defaultOptions = resolveOptions();

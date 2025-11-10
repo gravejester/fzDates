@@ -8,7 +8,7 @@ import {
   englishLocale
 } from '../src/locales/index.js';
 
-// Ensure baseline English pack is available for every test run.
+// ensure english locale is available
 registerLocale(englishLocale);
 
 test('english locale exposes expected tokens and display data', () => {

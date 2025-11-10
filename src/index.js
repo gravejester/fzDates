@@ -13,7 +13,7 @@ const defaultParser = createDateParser();
 
 export function createDateParser(defaultOptions) {
   const baseOptions = resolveOptions(defaultOptions);
-  // Ensure locale is registered; this throws if missing, pushing callers to add packs.
+  // ensure locale is registered
   const baseLocale = ensureLocale(baseOptions.locale, baseOptions.fallbackLocales);
 
   function parse(input, overrides) {

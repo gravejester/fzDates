@@ -5,25 +5,15 @@ This directory contains a self-contained vanilla JavaScript example that showcas
 ## Getting Started
 
 ```bash
-cd examples/vanilla
 npm install
 npm run dev
 ```
 
 The first install step will build the root `fzdates` package (via its `prepare` script) and link it into the example. After starting the dev server, open the URL printed by Vite (defaults to `http://localhost:5173`).
 
-## What the Demo Shows
-
-- Real-time parsing on every keystroke.
-- Live JSON view of the parser output (including issues and tokenization details).
-- Ambiguity resolution UI: when multiple interpretations exist, a dropdown lets you select the preferred display string.
-- Formatter integration so the selected interpretation is clearly surfaced.
-
-Feel free to tweak the configuration by editing `src/main.js`, or use this project as a starting point for your own integration.
-
 ## Cross-Platform Notes
 
-This example pins the Windows Rollup native binary (`@rollup/rollup-win32-x64-msvc`) to work around an npm issue that sometimes skips platform-specific optional dependencies. If you are on macOS or Linux you can swap in the matching package and reinstall:
+This example pins the Windows Rollup native binary (`@rollup/rollup-win32-x64-msvc`). If you are on macOS or Linux you can swap in the matching package and reinstall:
 
 | Platform | Command |
 | --- | --- |
@@ -40,4 +30,4 @@ npm install
 npm install --save-dev @rollup/rollup-<platform-package>
 ```
 
-Alternatively, you can remove the explicit `@rollup/*` package from `devDependencies` and reinstall—Rollup’s optional dependencies usually resolve automatically unless the npm bug resurfaces.
+Alternatively, you can remove the explicit `@rollup/*` package from `devDependencies` and reinstall—Rollup’s optional dependencies.
