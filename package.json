@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gravejester/fzDates"
+    "url": "git+https://github.com/gravejester/fzDates.git"
   },
   "bugs": {
     "url": "https://github.com/gravejester/fzDates/issues"
