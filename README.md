@@ -102,3 +102,7 @@ npm run dev
 - `npm run build` – produce both ESM and CommonJS outputs into `dist/`.
 - `npm test` – run the test suite via [uvu](https://github.com/lukeed/uvu).
 - `npm run clean` – remove build artifacts.
+
+## NOTE
+
+This project is realized with the use of AI.
