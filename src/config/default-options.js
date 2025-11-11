@@ -18,7 +18,7 @@ export const DEFAULT_OPTIONS = {
   partial: {
     inferMissingDay: false,
     inferMissingMonth: false,
-    allowTwoDigitYears: true
+    allowTwoDigitYears: false
   },
   ranges: {
     openRangeStrategy: 'allow',

@@ -2,6 +2,12 @@ const DAYS_PER_MONTH_COMMON = [
   31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
 ];
 
+const YEAR_DAY_THRESHOLD = 32;
+
+function allowsSmallYears(options) {
+  return options?.partial?.allowTwoDigitYears === true;
+}
+
 export function isLeapYear(year) {
   if (year % 400 === 0) return true;
   if (year % 100 === 0) return false;
@@ -15,21 +21,38 @@ export function daysInMonth(year, month) {
   return DAYS_PER_MONTH_COMMON[month - 1] || 31;
 }
 
-export function isValidYear(value, options) {
-  if (value >= 1000 && value <= 9999) {
+export function isValidYear(value, options = {}) {
+  if (!Number.isInteger(value)) {
+    return false;
+  }
+  const absolute = Math.abs(value);
+  if (absolute >= YEAR_DAY_THRESHOLD) {
     return true;
   }
-  if (value >= 0 && value <= 99 && options.partial?.allowTwoDigitYears) {
+  if (absolute === 0 && allowsSmallYears(options)) {
+    return true;
+  }
+  if (absolute <= 31 && allowsSmallYears(options)) {
     return true;
   }
   return false;
 }
 
-export function normalizeYear(value, options, issues) {
-  if (value >= 1000 && value <= 9999) {
+export function normalizeYear(value, options = {}, issues) {
+  if (!Number.isInteger(value)) {
+    return null;
+  }
+  const absolute = Math.abs(value);
+  if (absolute >= YEAR_DAY_THRESHOLD) {
     return value;
   }
-  if (value >= 0 && value <= 99 && options.partial?.allowTwoDigitYears) {
+  if (absolute === 0 && allowsSmallYears(options)) {
+    if (issues) {
+      issues.push('two-digit-year');
+    }
+    return value;
+  }
+  if (absolute <= 31 && allowsSmallYears(options)) {
     if (issues) {
       issues.push('two-digit-year');
     }
@@ -49,7 +72,7 @@ export function isValidDay(year, month, day) {
   if (!month || month < 1 || month > 12) {
     return true; // assume upper validation handles month
   }
-  return day <= daysInMonth(year || 2000, month);
+  return day <= daysInMonth(year ?? 2000, month);
 }
 
 export function makeSortKey(year, month, day) {

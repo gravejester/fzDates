@@ -1,5 +1,19 @@
 const RANGE_QUALIFIERS = new Set(['before', 'after']);
 
+function isYearCandidate(value, options) {
+  const absolute = Math.abs(value);
+  if (absolute >= 32) {
+    return true;
+  }
+  if (absolute === 0 && options?.partial?.allowTwoDigitYears) {
+    return true;
+  }
+  if (absolute <= 31 && options?.partial?.allowTwoDigitYears) {
+    return true;
+  }
+  return false;
+}
+
 function collectSignals(tokens) {
   const signals = {
     tokenCount: tokens.length,
@@ -53,7 +67,7 @@ function collectSignals(tokens) {
   return signals;
 }
 
-function hasPossibleRange(signals) {
+function hasPossibleRange(signals, options) {
   if (signals.hasRangeMarker || signals.hasRangeQualifier) {
     return true;
   }
@@ -67,7 +81,7 @@ function hasPossibleRange(signals) {
     if (!hasMonth && numberCount === 3) {
       // Distinguish numeric dates (e.g., 1978-09-21) from ranges (1980-1981).
       // Require at least two year-like values to classify as range.
-      const yearish = signals.numbers.filter((token) => token.value >= 1000);
+      const yearish = signals.numbers.filter((token) => isYearCandidate(token.value, options));
       if (yearish.length >= 2) {
         return true;
       }
@@ -78,10 +92,10 @@ function hasPossibleRange(signals) {
   return false;
 }
 
-function classifyExactOrPartial(signals) {
+function classifyExactOrPartial(signals, options) {
   const hasMonth = signals.months.length > 0;
   const numberCount = signals.numbers.length;
-  const yearCandidates = signals.numbers.filter((token) => token.value >= 1000);
+  const yearCandidates = signals.numbers.filter((token) => isYearCandidate(token.value, options));
   const dayCandidates = signals.numbers.filter((token) => token.value >= 1 && token.value <= 31);
 
   const hasApproxQualifier = signals.qualifiers.some((token) => token.subtype === 'approximate');
@@ -191,7 +205,7 @@ export function classifyTokens(tokens, options = {}) {
 
   const signals = collectSignals(tokens);
 
-  if (hasPossibleRange(signals)) {
+  if (hasPossibleRange(signals, options)) {
     return {
       kind: 'range',
       confidence: 'medium',
@@ -201,7 +215,7 @@ export function classifyTokens(tokens, options = {}) {
     };
   }
 
-  const result = classifyExactOrPartial(signals);
+  const result = classifyExactOrPartial(signals, options);
   return {
     ...result,
     signals
