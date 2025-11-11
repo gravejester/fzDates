@@ -206,8 +206,50 @@ function assignDisplayToCandidates(candidates, options, locale) {
   }
   return candidates.map((candidate) => ({
     ...candidate,
-    display: formatValueWithQualifiers(candidate, candidate?.qualifiers, options, locale)
+    display: formatValueWithQualifiers(candidate, candidate?.qualifiers, options, locale),
+    iso: isoStringForValue(candidate)
   }));
+}
+
+function isoStringForValue(value) {
+  if (!value) {
+    return null;
+  }
+  const iso = formatIsoValue(value);
+  return iso && iso.length > 0 ? iso : null;
+}
+
+function isoStringForRange(range) {
+  if (!range) {
+    return null;
+  }
+  const startIso = isoStringForValue(range.start);
+  const endIso = isoStringForValue(range.end);
+  if (!startIso && !endIso) {
+    return null;
+  }
+  if (startIso && endIso) {
+    return `${startIso}/${endIso}`;
+  }
+  if (startIso) {
+    return `${startIso}/`;
+  }
+  return `/${endIso}`;
+}
+
+function isoStringForResult(result) {
+  if (!result) {
+    return null;
+  }
+  switch (result.kind) {
+    case 'exact':
+    case 'partial':
+      return isoStringForValue(result.value);
+    case 'range':
+      return isoStringForRange(result.value);
+    default:
+      return null;
+  }
 }
 
 export function applyFormatting(result, options, locale) {
@@ -220,16 +262,21 @@ export function applyFormatting(result, options, locale) {
     result.display = display;
   }
 
+  result.iso = isoStringForResult(result);
+
   if ((result.kind === 'exact' || result.kind === 'partial') && result.value) {
     result.value.display = formatValueWithQualifiers(result.value, result.qualifiers, options, locale);
+    result.value.iso = isoStringForValue(result.value);
   }
 
   if (result.kind === 'range' && result.value) {
     if (result.value.start) {
       result.value.start.display = formatValueWithQualifiers(result.value.start, result.value.start?.qualifiers, options, locale);
+      result.value.start.iso = isoStringForValue(result.value.start);
     }
     if (result.value.end) {
       result.value.end.display = formatValueWithQualifiers(result.value.end, result.value.end?.qualifiers, options, locale);
+      result.value.end.iso = isoStringForValue(result.value.end);
     }
   }
 

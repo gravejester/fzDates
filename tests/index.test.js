@@ -10,6 +10,8 @@ test('parseDate recognizes exact date', () => {
   assert.is(result.value.day, 21);
   assert.is(result.normalized, '1978-09-21');
   assert.ok(result.issues.length === 0);
+  assert.is(result.iso, '1978-09-21');
+  assert.is(result.value.iso, '1978-09-21');
 });
 
 test('parseDate recognizes partial month + year', () => {
@@ -18,6 +20,8 @@ test('parseDate recognizes partial month + year', () => {
   assert.is(result.value.year, 2000);
   assert.is(result.value.month, 1);
   assert.ok(result.issues.includes('missing-day'));
+  assert.is(result.iso, '2000-01');
+  assert.is(result.value.iso, '2000-01');
 });
 
 test('parseDate reports ambiguity for numeric date with multiple orders', () => {
@@ -28,6 +32,7 @@ test('parseDate reports ambiguity for numeric date with multiple orders', () => 
   const normalized = result.candidates.map((c) => c.normalized);
   assert.ok(normalized.includes('1900-02-01'));
   assert.ok(normalized.includes('1900-01-02'));
+  assert.ok(result.candidates.every((c) => c.iso != null));
 });
 
 test('parseDate handles range inputs', () => {
@@ -36,6 +41,9 @@ test('parseDate handles range inputs', () => {
   assert.is(result.value.start.year, 1980);
   assert.is(result.value.end.month, 10);
   assert.is(result.precision, 'range');
+  assert.is(result.iso, '1980-01-01/1980-10-01');
+  assert.is(result.value.start.iso, '1980-01-01');
+  assert.is(result.value.end.iso, '1980-10-01');
 });
 
 test('createDateParser produces parser with parse function', () => {
@@ -49,6 +57,8 @@ test('parseDate attaches ISO display by default', () => {
   const result = parseDate('21 Sep 1978');
   assert.is(result.display, '1978-09-21');
   assert.is(result.value.display, '1978-09-21');
+  assert.is(result.iso, '1978-09-21');
+  assert.is(result.value.iso, '1978-09-21');
 });
 
 test('formatter respects locale style options', () => {
@@ -61,6 +71,8 @@ test('formatter respects locale style options', () => {
   const result = parser.parse('21 Sep 1978');
   assert.is(result.display, '21 Sep 1978');
   assert.is(result.value.display, '21 Sep 1978');
+  assert.is(result.iso, '1978-09-21');
+  assert.is(result.value.iso, '1978-09-21');
 });
 
 test('formatter renders range with locale-aware separator', () => {
@@ -73,6 +85,7 @@ test('formatter renders range with locale-aware separator', () => {
   assert.is(result.display, 'Jan 01 1980 – Feb 05 1980');
   assert.is(result.value.start.display, 'Jan 01 1980');
   assert.is(result.value.end.display, 'Feb 05 1980');
+  assert.is(result.iso, '1980-01-01/1980-02-05');
 });
 
 test('custom formatter overrides default rendering', () => {
@@ -102,24 +115,30 @@ test('custom formatter overrides default rendering', () => {
   const result = parser.parse('1978-09-21');
   assert.is(result.display, 'result:1978-09-21');
   assert.is(result.value.display, 'value:1978-09-21');
+  assert.is(result.iso, '1978-09-21');
+  assert.is(result.value.iso, '1978-09-21');
 });
 
 test('ambiguous results do not expose a default display string', () => {
   const result = parseDate('01/02/1900');
   assert.is(result.kind, 'ambiguous');
   assert.is(result.display, undefined);
+  assert.ok(Array.isArray(result.candidates));
+  assert.ok(result.candidates.every((candidate) => candidate.iso));
 });
 
 test('invalid results do not include a display field', () => {
   const result = parseDate('@@@');
   assert.is(result.kind, 'invalid');
   assert.is(result.display, undefined);
+  assert.is(result.iso, null);
 });
 
 test('open range formatting emits qualifier-based text', () => {
   const result = parseDate('after jan 1900');
   assert.is(result.kind, 'range');
   assert.is(result.display, 'after 1900-01');
+  assert.is(result.iso, '1900-01/');
 });
 
 test.run();

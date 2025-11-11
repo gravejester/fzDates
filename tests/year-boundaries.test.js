@@ -13,6 +13,8 @@ test('parseDate supports four-digit years near the historical ceiling', () => {
   assert.is(result.kind, 'exact');
   assert.is(result.value.year, 9999);
   assert.is(result.display, '9999-12-31');
+  assert.is(result.iso, '9999-12-31');
+  assert.is(result.value.iso, '9999-12-31');
 });
 
 test('parseDate supports three-digit years', () => {
@@ -22,6 +24,8 @@ test('parseDate supports three-digit years', () => {
   assert.is(result.value.month, 1);
   assert.is(result.value.day, 1);
   assert.is(result.display, '0889-01-01');
+  assert.is(result.iso, '0889-01-01');
+  assert.is(result.value.iso, '0889-01-01');
 });
 
 test('parseDate supports five-digit years', () => {
@@ -29,6 +33,8 @@ test('parseDate supports five-digit years', () => {
   assert.is(result.kind, 'exact');
   assert.is(result.value.year, 10000);
   assert.is(result.display, '10000-12-31');
+  assert.is(result.iso, '10000-12-31');
+  assert.is(result.value.iso, '10000-12-31');
 });
 
 test('parseDate treats literal high two-digit years as exact dates', () => {
@@ -36,6 +42,7 @@ test('parseDate treats literal high two-digit years as exact dates', () => {
   assert.is(result.kind, 'exact');
   assert.is(result.value.year, 78);
   assert.is(result.display, '0078-06-05');
+  assert.is(result.iso, '0078-06-05');
 });
 
 test('small two-digit years require explicit opt-in', () => {
@@ -43,6 +50,8 @@ test('small two-digit years require explicit opt-in', () => {
   assert.is(result.kind, 'partial');
   assert.is(result.value.year, null);
   assert.ok(collectIssues(result).includes('missing-year'));
+  assert.is(result.iso, '--06-05');
+  assert.is(result.value?.iso, '--06-05');
 });
 
 test('two-digit years within the day range can be enabled via configuration', () => {
@@ -52,6 +61,7 @@ test('two-digit years within the day range can be enabled via configuration', ()
   let result = parser.parse('05 Jun 21');
   assert.is(result.kind, 'partial');
   assert.ok(collectIssues(result).includes('missing-year'));
+  assert.is(result.iso, '--06-05');
 
   const permissive = createDateParser({
     partial: { allowTwoDigitYears: true }
@@ -60,6 +70,8 @@ test('two-digit years within the day range can be enabled via configuration', ()
   assert.is(result.kind, 'exact');
   assert.is(result.value.year, 21);
   assert.ok(collectIssues(result).includes('two-digit-year'));
+  assert.is(result.iso, '0021-06-05');
+  assert.is(result.value.iso, '0021-06-05');
 });
 
 test.run();
